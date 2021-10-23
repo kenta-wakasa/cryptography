@@ -361,9 +361,9 @@ class Jwk {
           type: type,
         );
 
-      case 'OCP':
+      case 'OKP':
         if (crv == 'Ed25519') {
-          final y = this.y!;
+          final d = this.d!;
           return SimpleKeyPair.lazy(
             () async {
               return Ed25519().newKeyPairFromSeed(y);
@@ -371,7 +371,7 @@ class Jwk {
           );
         }
         if (crv == 'X25519') {
-          final y = this.y!;
+          final d = this.d!;
           return SimpleKeyPair.lazy(
             () async {
               return X25519().newKeyPairFromSeed(y);
@@ -414,7 +414,7 @@ class Jwk {
           type: type,
         );
 
-      case 'OCP':
+      case 'OKP':
         final type = const <String, KeyPairType>{
           'Ed25519': KeyPairType.ed25519,
           'X25519': KeyPairType.x25519,
