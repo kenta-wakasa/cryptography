@@ -366,7 +366,7 @@ class Jwk {
           final d = this.d!;
           return SimpleKeyPair.lazy(
             () async {
-              return Ed25519().newKeyPairFromSeed(y);
+              return Ed25519().newKeyPairFromSeed(d);
             },
           );
         }
@@ -374,7 +374,7 @@ class Jwk {
           final d = this.d!;
           return SimpleKeyPair.lazy(
             () async {
-              return X25519().newKeyPairFromSeed(y);
+              return X25519().newKeyPairFromSeed(d);
             },
           );
         }
