@@ -523,6 +523,7 @@ class Jwk {
     if (keyPair is EcKeyPairData) {
       final crv = <KeyPairType, String>{
         KeyPairType.p256: 'P-256',
+        KeyPairType.p256k: 'P-256K',
         KeyPairType.p384: 'P-384',
         KeyPairType.p521: 'P-521',
       }[keyPair.type];
@@ -567,6 +568,7 @@ class Jwk {
     if (publicKey is EcPublicKey) {
       final crv = const <KeyPairType, String>{
         KeyPairType.p256: 'P-256',
+        KeyPairType.p256k: 'P-256K',
         KeyPairType.p384: 'P-384',
         KeyPairType.p521: 'P-521',
       }[publicKey.type];
@@ -575,6 +577,7 @@ class Jwk {
           kty: 'EC',
           crv: crv,
           x: publicKey.x,
+          y: publicKey.y,
         );
       }
     } else if (publicKey is SimplePublicKey) {
