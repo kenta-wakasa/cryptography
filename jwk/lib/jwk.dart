@@ -542,7 +542,7 @@ class Jwk {
       }[keyPair.type];
       if (crv != null) {
         return Jwk(
-          kty: 'EC',
+          kty: 'OKP',
           crv: crv,
           x: keyPair.bytes,
         );
