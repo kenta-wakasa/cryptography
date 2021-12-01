@@ -572,7 +572,7 @@ class Jwk {
       }[publicKey.type];
       if (crv != null) {
         return Jwk(
-          kty: 'OKP',
+          kty: 'EC',
           crv: crv,
           x: publicKey.x,
         );
@@ -584,7 +584,7 @@ class Jwk {
       }[publicKey.type];
       if (crv != null) {
         return Jwk(
-          kty: 'EC',
+          kty: 'OKP',
           crv: crv,
           x: publicKey.bytes,
         );
