@@ -519,7 +519,7 @@ class Jwk {
     return builder.build();
   }
 
-  static Jwk fromKeyPair(KeyPair keyPair) {
+  static Future<Jwk> fromKeyPair(KeyPair keyPair) async {
     if (keyPair is EcKeyPairData) {
       final crv = <KeyPairType, String>{
         KeyPairType.p256: 'P-256',
@@ -542,10 +542,13 @@ class Jwk {
         KeyPairType.x25519: 'X25519',
       }[keyPair.type];
       if (crv != null) {
+        final x = (await keyPair.extractPublicKey()).bytes;
+        final d = keyPair.bytes;
         return Jwk(
           kty: 'OKP',
           crv: crv,
-          x: keyPair.bytes,
+          x: x,
+          d: d,
         );
       }
     } else if (keyPair is RsaKeyPairData) {
