@@ -34,7 +34,7 @@ import 'package:cryptography/cryptography.dart';
 ///   final algorithm = Ed25519();
 ///
 ///   // Generate a new key pair
-///   final keyPair = await algorithm.keyGenerator.newKeyPair();
+///   final keyPair = await algorithm.newKeyPair();
 ///
 ///   // Sign
 ///   final message = <int>[1,2,3];
@@ -63,7 +63,7 @@ abstract class SignatureAlgorithm {
   /// You can pass key generation preferences by specifying `options`.
   Future<KeyPair> newKeyPair();
 
-  Future<KeyPair> newKeyPairFromSeed(List<int> bytes) {
+  Future<KeyPair> newKeyPairFromSeed(List<int> seed) {
     throw UnsupportedError(
         'newKeyPairFromSeed() is unsupported by this algorithm');
   }

@@ -12,13 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/// Cryptographic algorithms implemented with
-/// [Web Cryptography API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API).
-///
-/// See [BrowserCryptography].
-library cryptography.browser;
+import 'dart:typed_data';
 
-import 'package:cryptography/browser.dart';
-
-export 'src/browser/cryptography_outside_browser.dart'
-    if (dart.library.html) 'src/browser/cryptography.dart';
+void checkSystemIsLittleEndian() {
+  if (Endian.host != Endian.little) {
+    throw UnimplementedError('The platform should be little-endian.');
+  }
+}

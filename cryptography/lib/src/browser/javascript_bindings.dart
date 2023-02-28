@@ -29,11 +29,11 @@ List<int>? base64UrlDecode(String? s) {
   }
   switch (s.length % 4) {
     case 1:
-      return base64Url.decode(s + '===');
+      return base64Url.decode('$s===');
     case 2:
-      return base64Url.decode(s + '==');
+      return base64Url.decode('$s==');
     case 3:
-      return base64Url.decode(s + '=');
+      return base64Url.decode('$s=');
     default:
       return base64Url.decode(s);
   }
@@ -286,6 +286,7 @@ class Jwk {
     String? dq,
     String? qi,
     bool? ext,
+    // ignore: non_constant_identifier_names
     List<String>? key_ops,
     required String kty,
     String? x,
@@ -304,6 +305,7 @@ class Jwk {
 
   external bool get ext;
 
+  // ignore: non_constant_identifier_names
   external List<String> get key_ops;
 
   external String get kty;

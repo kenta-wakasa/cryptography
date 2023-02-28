@@ -18,14 +18,17 @@ import 'package:cryptography/cryptography.dart';
 
 /// [Poly1305] implemented in pure Dart.
 ///
+/// For examples and more information about the algorithm, see documentation for
+/// the class [Poly1305].
+///
 /// ## Known limitations
-///   * Currently uses [BigInt]
+///   * Currently uses [BigInt], which makes the implementation slow.
 class DartPoly1305 extends Poly1305 {
   const DartPoly1305() : super.constructor();
 
   @override
   Future<Mac> calculateMac(
-    List<int> input, {
+    List<int> bytes, {
     required SecretKey secretKey,
     List<int> nonce = const <int>[],
     List<int> aad = const <int>[],
@@ -35,7 +38,7 @@ class DartPoly1305 extends Poly1305 {
       nonce: nonce,
       aad: aad,
     );
-    sink.addSlice(input, 0, input.length, true);
+    sink.addSlice(bytes, 0, bytes.length, true);
     sink.close();
     return sink.mac();
   }
@@ -47,7 +50,11 @@ class DartPoly1305 extends Poly1305 {
     List<int> aad = const <int>[],
   }) async {
     if (aad.isNotEmpty) {
-      throw ArgumentError.value(aad, 'aad', 'AAD is not supported');
+      throw ArgumentError.value(
+        aad,
+        'aad',
+        'AAD is not supported',
+      );
     }
     final secretKeyBytes = await secretKey.extractBytes();
 

@@ -18,15 +18,15 @@ import 'package:cryptography/cryptography.dart';
 import 'package:cryptography/helpers.dart';
 import 'package:meta/meta.dart';
 
-/// A key pair that is made of two simple byte sequences.
+/// An opaque [KeyPair] that is made of two simple byte sequences.
 ///
-/// ## Related classes
-///   * [SimpleKeyPairData]
-///   * [SimplePublicKey]
+/// The private key bytes of the key may not be in the memory. The private key
+/// bytes may not even be extractable. If the private key is in memory, it's an
+/// instance of [SimpleKeyPairData].
 ///
-/// ## Algorithms that use this
-///   * [Ed25519]
-///   * [X25519]
+/// The public key is always [SimplePublicKeyData].
+///
+/// This class is used with algorithms such as [Ed25519] and [X25519].
 abstract class SimpleKeyPair extends KeyPair {
   factory SimpleKeyPair.lazy(Future<SimpleKeyPair> Function() f) =
       _LazySimpleKeyPair;
@@ -40,17 +40,11 @@ abstract class SimpleKeyPair extends KeyPair {
   Future<SimplePublicKey> extractPublicKey();
 }
 
-/// Data of [SimpleKeyPair].
+/// An in-memory [SimpleKeyPair] that is made of two simple byte sequences.
 ///
-/// ## Related classes
-///   * [SimpleKeyPair]
-///   * [SimplePublicKey]
-///
-/// ## Algorithms that use this
-///   * [Ed25519]
-///   * [X25519]
+/// This can be used with algorithms such as [Ed25519] and [X25519].
 @sealed
-class SimpleKeyPairData extends KeyPairData implements SimpleKeyPair {
+class SimpleKeyPairData implements KeyPairData, SimpleKeyPair {
   final List<int> bytes;
 
   @override
@@ -62,8 +56,7 @@ class SimpleKeyPairData extends KeyPairData implements SimpleKeyPair {
     this.bytes, {
     required FutureOr<SimplePublicKey> publicKey,
     required this.type,
-  })  : _publicKey = publicKey,
-        super(type: type);
+  }) : _publicKey = publicKey;
 
   @override
   int get hashCode => constantTimeBytesEquality.hash(bytes) ^ type.hashCode;

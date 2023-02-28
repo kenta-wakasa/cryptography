@@ -22,7 +22,10 @@ import 'aes_impl.dart';
 
 const _bit32 = 0x100 * 0x100 * 0x100 * 0x100;
 
-/// [AesGcm] cipher implemented in pure Dart.
+/// [AesGcm] implemented in pure Dart.
+///
+/// For examples and more information about the algorithm, see documentation for
+/// the class [AesGcm].
 //
 // The implementation was written based on the original specification:
 //   https://csrc.nist.gov/publications/detail/sp/800-38d/final
@@ -382,7 +385,7 @@ class DartGcm extends MacAlgorithm {
 
   @override
   Future<Mac> calculateMac(
-    List<int> input, {
+    List<int> bytes, {
     required SecretKey secretKey,
     List<int> nonce = const <int>[],
     List<int> aad = const <int>[],

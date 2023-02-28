@@ -36,10 +36,6 @@ Future<List<int>> _decryptWithPlugin(
       'mac': Uint8List.fromList(secretBox.mac.bytes),
     },
   );
-  final error = result['error'];
-  if (error is String) {
-    throw StateError(error);
-  }
   return result['clearText'] as Uint8List;
 }
 
@@ -61,10 +57,6 @@ Future<SecretBox> _encryptWithPlugin(
       'nonce': Uint8List.fromList(nonce),
     },
   );
-  final error = result['error'];
-  if (error is String) {
-    throw StateError(error);
-  }
   final cipherText = result['cipherText'] as Uint8List;
   var mac = Mac.empty;
   if (result.containsKey('mac')) {
@@ -73,7 +65,8 @@ Future<SecretBox> _encryptWithPlugin(
   return SecretBox(cipherText, nonce: nonce, mac: mac);
 }
 
-abstract class FlutterCipher extends DelegatingCipher {
+abstract class FlutterCipher extends DelegatingCipher
+    with FlutterCryptographyImplementation {
   late bool usePlugin = isSupportedPlatform;
 
   bool get isSupportedPlatform;
@@ -88,15 +81,15 @@ abstract class FlutterCipher extends DelegatingCipher {
   }) async {
     if (usePlugin) {
       try {
-        return _decryptWithPlugin(
+        return await _decryptWithPlugin(
           this,
           secretBox,
           secretKey: secretKey,
           aad: aad,
         );
-      } catch (error) {
+      } catch (error, stackTrace) {
         usePlugin = false;
-        reportError(error);
+        reportError(error, stackTrace);
       }
     }
     return super.decrypt(
@@ -115,16 +108,16 @@ abstract class FlutterCipher extends DelegatingCipher {
   }) async {
     if (usePlugin) {
       try {
-        return _encryptWithPlugin(
+        return await _encryptWithPlugin(
           this,
           clearText,
           secretKey: secretKey,
           nonce: nonce,
           aad: aad,
         );
-      } catch (error) {
+      } catch (error, stackTrace) {
         usePlugin = false;
-        reportError(error);
+        reportError(error, stackTrace);
       }
     }
     return super.encrypt(
@@ -134,16 +127,10 @@ abstract class FlutterCipher extends DelegatingCipher {
       aad: aad,
     );
   }
-
-  void reportError(Object error) {
-    if (error is UnsupportedError) {
-      return;
-    }
-    print('"package:cryptography_flutter": error: $error');
-  }
 }
 
 abstract class FlutterStreamingCipher extends DelegatingStreamingCipher
+    with FlutterCryptographyImplementation
     implements FlutterCipher {
   @override
   late bool usePlugin = isSupportedPlatform;
@@ -163,15 +150,15 @@ abstract class FlutterStreamingCipher extends DelegatingStreamingCipher
   }) async {
     if (keyStreamIndex == 0 && usePlugin) {
       try {
-        return _decryptWithPlugin(
+        await _decryptWithPlugin(
           this,
           secretBox,
           secretKey: secretKey,
           aad: aad,
         );
-      } catch (error) {
+      } catch (error, stackTrace) {
         usePlugin = false;
-        reportError(error);
+        reportError(error, stackTrace);
       }
     }
     return super.decrypt(
@@ -192,16 +179,16 @@ abstract class FlutterStreamingCipher extends DelegatingStreamingCipher
   }) async {
     if (keyStreamIndex == 0 && usePlugin) {
       try {
-        return _encryptWithPlugin(
+        return await _encryptWithPlugin(
           this,
           clearText,
           secretKey: secretKey,
           nonce: nonce,
           aad: aad,
         );
-      } catch (error) {
+      } catch (error, stackTrace) {
         usePlugin = false;
-        reportError(error);
+        reportError(error, stackTrace);
       }
     }
     return super.encrypt(
@@ -211,13 +198,5 @@ abstract class FlutterStreamingCipher extends DelegatingStreamingCipher
       aad: aad,
       keyStreamIndex: keyStreamIndex,
     );
-  }
-
-  @override
-  void reportError(Object error) {
-    if (error is UnsupportedError) {
-      return;
-    }
-    print('"package:cryptography_flutter": error: $error');
   }
 }

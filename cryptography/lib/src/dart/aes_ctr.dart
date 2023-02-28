@@ -20,6 +20,9 @@ import '../utils.dart';
 import 'aes_impl.dart';
 
 /// [AesCtr] implemented in pure Dart.
+///
+/// For examples and more information about the algorithm, see documentation for
+/// the class [AesCtr].
 class DartAesCtr extends AesCtr with DartAesMixin {
   @override
   final MacAlgorithm macAlgorithm;
@@ -33,11 +36,38 @@ class DartAesCtr extends AesCtr with DartAesMixin {
   const DartAesCtr({
     required this.macAlgorithm,
     this.secretKeyLength = 32,
-    this.counterBits = 64,
+    this.counterBits = AesCtr.defaultCounterBits,
   })  : assert(secretKeyLength == 16 ||
             secretKeyLength == 24 ||
             secretKeyLength == 32),
         super.constructor();
+
+  const DartAesCtr.with128bits({
+    required MacAlgorithm macAlgorithm,
+    int counterBits = AesCtr.defaultCounterBits,
+  }) : this(
+          secretKeyLength: 16,
+          macAlgorithm: macAlgorithm,
+          counterBits: counterBits,
+        );
+
+  const DartAesCtr.with192bits({
+    required MacAlgorithm macAlgorithm,
+    int counterBits = AesCtr.defaultCounterBits,
+  }) : this(
+          secretKeyLength: 24,
+          macAlgorithm: macAlgorithm,
+          counterBits: counterBits,
+        );
+
+  const DartAesCtr.with256bits({
+    required MacAlgorithm macAlgorithm,
+    int counterBits = AesCtr.defaultCounterBits,
+  }) : this(
+          secretKeyLength: 32,
+          macAlgorithm: macAlgorithm,
+          counterBits: counterBits,
+        );
 
   @override
   Future<List<int>> decrypt(

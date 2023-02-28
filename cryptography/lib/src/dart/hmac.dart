@@ -18,6 +18,9 @@ import 'package:cryptography/cryptography.dart';
 import 'package:cryptography/dart.dart';
 
 /// An implementation of [Hmac] in pure Dart.
+///
+/// For examples and more information about the algorithm, see documentation for
+/// the class [Hmac].
 class DartHmac extends Hmac with DartMacAlgorithmMixin {
   /// Hash algorithm used by this HMAC.
   @override
@@ -27,13 +30,17 @@ class DartHmac extends Hmac with DartMacAlgorithmMixin {
 
   @override
   Future<Mac> calculateMac(
-    List<int> input, {
+    List<int> bytes, {
     required SecretKey secretKey,
     List<int> nonce = const <int>[],
     List<int> aad = const <int>[],
   }) async {
     if (aad.isNotEmpty) {
-      throw ArgumentError.value(aad, 'aad', 'AAD is not supported');
+      throw ArgumentError.value(
+        aad,
+        'aad',
+        'AAD is not supported',
+      );
     }
     final secretKeyData = await secretKey.extract();
     var hmacKey = secretKeyData.bytes;
@@ -55,9 +62,9 @@ class DartHmac extends Hmac with DartMacAlgorithmMixin {
     // Inner hash
     final innerPadding = Uint8List(blockLength);
     _preparePadding(innerPadding, hmacKey, 0x36);
-    final innerInput = Uint8List(innerPadding.length + input.length);
+    final innerInput = Uint8List(innerPadding.length + bytes.length);
     innerInput.setAll(0, innerPadding);
-    innerInput.setAll(innerPadding.length, input);
+    innerInput.setAll(innerPadding.length, bytes);
     final innerHash = await hashAlgorithm.hash(innerInput);
 
     // Outer hash

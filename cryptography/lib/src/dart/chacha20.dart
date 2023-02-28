@@ -20,20 +20,36 @@ import 'package:cryptography/src/utils.dart';
 
 /// [Chacha20] implemented in pure Dart.
 ///
-/// ## Recommendation
-/// Usually you should use [Cryptography.chacha20]:
-/// ```
-/// final cipher = Cryptography.instance.chacha20()
-/// ```
+/// In almost every case, you should use constructor [DartChacha20.poly1305Aead],
+/// which returns _AEAD_CHACHA20_POLY1305_ cipher
+/// (([RFC 7539](https://tools.ietf.org/html/rfc7539)).
+/// The AEAD implementation uses [DartChacha20Poly1305AeadMacAlgorithm].
+///
+/// For examples and more information about the algorithm, see documentation for
+/// the class [Chacha20].
 class DartChacha20 extends Chacha20 {
   static const int _rounds = 20;
 
   @override
   final MacAlgorithm macAlgorithm;
 
+  /// Constructs [DartChacha20] with any MAC.
+  ///
+  /// In almost every case, you should use constructor [DartChacha20.poly1305Aead],
+  /// which returns _AEAD_CHACHA20_POLY1305_ cipher
+  /// (([RFC 7539](https://tools.ietf.org/html/rfc7539)).
+  /// The AEAD implementation uses [DartChacha20Poly1305AeadMacAlgorithm].
   const DartChacha20({
     required this.macAlgorithm,
   }) : super.constructor();
+
+  /// Constructs _AEAD_CHACHA20_POLY1305_ cipher
+  /// (([RFC 7539](https://tools.ietf.org/html/rfc7539)).
+  ///
+  /// The implementation uses [DartChacha20Poly1305AeadMacAlgorithm].
+  const DartChacha20.poly1305Aead()
+      : macAlgorithm = const DartChacha20Poly1305AeadMacAlgorithm(),
+        super.constructor();
 
   @override
   Future<List<int>> decrypt(
@@ -121,7 +137,7 @@ class DartChacha20 extends Chacha20 {
         throw ArgumentError.value(
           keyStreamIndex,
           'keyStreamIndex',
-          'Must be zero',
+          'Must be zero when AEAD is used',
         );
       }
       keyStreamIndex = 64;

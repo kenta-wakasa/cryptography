@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import 'dart:convert';
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart';
 
@@ -46,7 +46,7 @@ abstract class MacAlgorithm {
   /// empty. If it's non-empty and the algorithm does not support AAD, the
   /// the method throws [ArgumentError].
   Future<Mac> calculateMac(
-    List<int> input, {
+    List<int> bytes, {
     required SecretKey secretKey,
     List<int> nonce = const <int>[],
     List<int> aad = const <int>[],
@@ -98,6 +98,13 @@ abstract class MacAlgorithm {
         secretKey,
         'secretKey',
         'SecretKey bytes must be non-empty',
+      );
+    }
+    if (aad.isNotEmpty && !supportsAad) {
+      throw ArgumentError.value(
+        aad,
+        'aad',
+        'AAD is not supported',
       );
     }
     return _MacSink(
