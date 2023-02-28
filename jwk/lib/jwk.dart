@@ -15,6 +15,7 @@
 /// JWK (JSON Web Key) encoding and decoding.
 library jwk;
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
@@ -519,7 +520,7 @@ class Jwk {
     return builder.build();
   }
 
-  static Jwk fromKeyPair(KeyPair keyPair) {
+  static FutureOr<Jwk> fromKeyPair(KeyPair keyPair) async {
     if (keyPair is EcKeyPairData) {
       final crv = <KeyPairType, String>{
         KeyPairType.p256: 'P-256',
@@ -545,6 +546,7 @@ class Jwk {
           kty: 'OKP',
           crv: crv,
           d: keyPair.bytes,
+          x: await keyPair.extractPrivateKeyBytes(),
         );
       }
     } else if (keyPair is RsaKeyPairData) {
